@@ -57,9 +57,10 @@ void buf_reset( Buf_t *b );
 int buf_realloc( Buf_t *b, size_t bytes );
 #define buf_increase(b,B)({ \
     int _rc = BUF_OK; \
-    if( B > (b)->total ){ \
-        size_t _mod = B % (b)->unit; \
-        _rc = buf_realloc( b, ( _mod ) ? B - _mod + (b)->unit : B ); \
+    size_t _bytes = (B); \
+    if( _bytes > (b)->total ){ \
+        size_t _mod = _bytes % (b)->unit; \
+        _rc = buf_realloc( b, ( _mod ) ? _bytes - _mod + (b)->unit : _bytes ); \
     } \
     _rc; \
 })
