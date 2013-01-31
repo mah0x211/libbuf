@@ -1,2 +1,11 @@
-libbuf
-========
+#libbuf
+
+string buffer library
+
+## Install
+
+    autoreconf -ivf
+    ./configure
+    make
+    make check
+    make install
