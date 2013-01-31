@@ -84,73 +84,73 @@ int buf_shift( Buf_t *b, size_t from, size_t idx )
 
 int buf_strset( Buf_t *b, const char *str )
 {
-	if( str )
-	{
-		size_t len = strlen( str );
+    if( str )
+    {
+        size_t len = strlen( str );
         
         if( buf_increase( b, len + 1 ) == BUF_OK ){
             memcpy( b->mem, str, len );
             ((char*)b->mem)[len] = 0;
             b->used = len;
             return BUF_OK;
-		}
+        }
         
         return errno;
-	}
-	
-	return ( errno = EINVAL );
+    }
+    
+    return ( errno = EINVAL );
 }
 
 int buf_strnset( Buf_t *b, const char *str, size_t len )
 {
-	if( len )
-	{
-		if( buf_increase( b, len + 1 ) == BUF_OK ){
+    if( len )
+    {
+        if( buf_increase( b, len + 1 ) == BUF_OK ){
             memcpy( b->mem, str, len );
             ((char*)b->mem)[len] = 0;
             b->used = len;
             return BUF_OK;
-		}
+        }
         return errno;
-	}
-	
-	return ( errno = EINVAL );
+    }
+    
+    return ( errno = EINVAL );
 }
 
 int buf_strcat( Buf_t *b, const char *str )
 {
-	if( str )
-	{
-		size_t len = strlen( str );
-		
-		if( buf_increase( b, b->used + len + 1 ) == BUF_OK ){
+    if( str )
+    {
+        size_t len = strlen( str );
+        
+        if( buf_increase( b, b->used + len + 1 ) == BUF_OK ){
             memcpy( b->mem + b->used, str, len );
             b->used += len;
             ((char*)b->mem)[b->used] = 0;
             return BUF_OK;
-		}
+        }
         
         return errno;
-	}
+    }
     
-	return ( errno = EINVAL );
+    return ( errno = EINVAL );
 }
 
 int buf_strncat( Buf_t *b, const char *str, size_t len )
 {
-	if( len )
-	{
-		if( buf_increase( b, b->used + len + 1 ) == BUF_OK ){
+    if( len )
+    {
+        if( buf_increase( b, b->used + len + 1 ) == BUF_OK ){
             memcpy( b->mem + b->used, str, len );
             b->used += len;
             ((char*)b->mem)[b->used] = 0;
             return BUF_OK;
-		}
+        }
         
         return errno;
-	}
-	
-	return ( errno = EINVAL );
+    }
+    
+    return ( errno = EINVAL );
 }
 
 
@@ -163,7 +163,7 @@ int buf_strccat( Buf_t *b, const unsigned char c )
         return BUF_OK;
     }
     
-	return errno;
+    return errno;
 }
 
 int buf_strins( Buf_t *b, size_t cur, const char *str )
@@ -182,20 +182,20 @@ int buf_strins( Buf_t *b, size_t cur, const char *str )
         return errno;
     }
     
-	return ( errno = EINVAL );
+    return ( errno = EINVAL );
 }
 
 // replace all target string
 int buf_strsub( Buf_t *b, const char *str, const char *rep )
 {
-	if( str && rep )
-	{
-		char *match = (char*)b->mem;
-		size_t len = strlen( str );
-		size_t rlen = strlen( rep );
-		ssize_t shift = rlen - len;
-		ptrdiff_t cur;
-		
+    if( str && rep )
+    {
+        char *match = (char*)b->mem;
+        size_t len = strlen( str );
+        size_t rlen = strlen( rep );
+        ssize_t shift = rlen - len;
+        ptrdiff_t cur;
+        
         while( ( match = strstr( match, str ) ) )
         {
             cur = (uintptr_t)match - (uintptr_t)b->mem;
@@ -211,20 +211,20 @@ int buf_strsub( Buf_t *b, const char *str, const char *rep )
         }
         
         return BUF_OK;
-	}
+    }
 
-	return ( errno = EINVAL );
+    return ( errno = EINVAL );
 }
 
 int buf_strnsub( Buf_t *b, const char *str, const char *rep, size_t num )
 {
-	if( str && rep && num )
-	{
-		char *match = (char*)b->mem;
-		size_t len = strlen( str );
-		size_t rlen = strlen( rep );
-		ssize_t shift = rlen - len;
-		ptrdiff_t cur;
+    if( str && rep && num )
+    {
+        char *match = (char*)b->mem;
+        size_t len = strlen( str );
+        size_t rlen = strlen( rep );
+        ssize_t shift = rlen - len;
+        ptrdiff_t cur;
         
         while( ( match = strstr( match, str ) ) )
         {
@@ -244,17 +244,17 @@ int buf_strnsub( Buf_t *b, const char *str, const char *rep, size_t num )
         }
         
         return BUF_OK;
-	}
+    }
 
-	return ( errno = EINVAL );
+    return ( errno = EINVAL );
 }
 
 int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep )
 {
-	if( to < b->used && from < to )
-	{
-		size_t len = strlen( rep );
-		size_t rlen, shift;
+    if( to < b->used && from < to )
+    {
+        size_t len = strlen( rep );
+        size_t rlen, shift;
         
         if( to > b->used ){
             rlen = b->used - from;
@@ -265,21 +265,21 @@ int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep )
         else {
             rlen = to - from;
         }
-		shift = len - rlen;
-		
-		if( shift != 0 &&
+        shift = len - rlen;
+        
+        if( shift != 0 &&
             buf_shift( b, from + rlen, from + rlen + shift ) != BUF_OK ){
             return errno;
-		}
+        }
         // replace string
         else if( len ){
             memcpy( b->mem + from, rep, len );
         }
         
         return BUF_OK;
-	}
-	
-	return ( errno = EINVAL );
+    }
+    
+    return ( errno = EINVAL );
 }
 
 ssize_t buf_strtoll( const char *str )
