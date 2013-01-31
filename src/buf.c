@@ -282,22 +282,4 @@ int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep )
     return ( errno = EINVAL );
 }
 
-ssize_t buf_strtoll( const char *str )
-{
-    ssize_t bytes = 0;
-    char *delim = NULL;
-    
-    errno = 0;
-    bytes = strtoll( str, &delim, 10 );
-    // invalid number format
-    if( errno ){
-        return errno;
-    }
-    else if( ( delim && *delim ) ){
-        return ( errno = EINVAL );
-    }
-    
-    return bytes;
-}
-
 
