@@ -40,8 +40,8 @@
 typedef struct {
     // buffer
     size_t unit;
-	size_t used;
-	size_t total;
+    size_t used;
+    size_t total;
     void *mem;
 } Buf_t;
 
