@@ -254,18 +254,8 @@ int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep )
     if( to < b->used && from < to )
     {
         size_t len = strlen( rep );
-        size_t rlen, shift;
-        
-        if( to > b->used ){
-            rlen = b->used - from;
-        }
-        else if( to == from ){
-            rlen = 1;
-        }
-        else {
-            rlen = to - from;
-        }
-        shift = len - rlen;
+        size_t rlen = to - from;
+        size_t shift = len - rlen;
         
         if( shift != 0 &&
             buf_shift( b, from + rlen, from + rlen + shift ) != BUF_OK ){
