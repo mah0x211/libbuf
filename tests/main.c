@@ -66,6 +66,12 @@ void test( void )
     TEST_FN( b, BUF_OK, buf_strsub_range, 2, 12, "delete" );
     TEST_CMP( b, "98deleteLcat tA" );
     
+    TEST_FN( b, BUF_OK, buf_strnins, 12, "YY", 1 );
+    TEST_CMP( b, "98deleteLcatY tA" );
+
+    TEST_FN( b, BUF_OK, buf_strnins, 12, "ZZ", 2 );
+    TEST_CMP( b, "98deleteLcatZZY tA" );
+    
     buf_dispose( b );
 }
 
