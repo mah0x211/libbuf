@@ -169,24 +169,6 @@ int buf_strccat( Buf_t *b, const unsigned char c )
     return errno;
 }
 
-int buf_strins( Buf_t *b, size_t cur, const char *str )
-{
-    if( str && cur < b->used )
-    {
-        size_t len = strlen( str );
-        
-        if( buf_shift( b, cur, cur + len ) == BUF_OK ){
-            // insert string
-            memcpy( b->mem + cur, str, len );
-            return BUF_OK;
-        }
-        
-        return errno;
-    }
-    
-    return ( errno = EINVAL );
-}
-
 int buf_strnins( Buf_t *b, size_t cur, const char *str, size_t len )
 {
     if( str && cur < b->used )
