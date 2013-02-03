@@ -120,28 +120,9 @@ int buf_strnset( Buf_t *b, const char *str, size_t len )
     return ( errno = EINVAL );
 }
 
-int buf_strcat( Buf_t *b, const char *str )
-{
-    if( str )
-    {
-        size_t len = strlen( str );
-        
-        if( buf_increase( b, b->used + len + 1 ) == BUF_OK ){
-            memcpy( b->mem + b->used, str, len );
-            b->used += len;
-            ((char*)b->mem)[b->used] = 0;
-            return BUF_OK;
-        }
-        
-        return errno;
-    }
-    
-    return ( errno = EINVAL );
-}
-
 int buf_strncat( Buf_t *b, const char *str, size_t len )
 {
-    if( len )
+    if( str && len )
     {
         if( buf_increase( b, b->used + len + 1 ) == BUF_OK ){
             memcpy( b->mem + b->used, str, len );
