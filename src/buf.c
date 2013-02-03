@@ -75,6 +75,9 @@ int buf_shift( Buf_t *b, size_t from, size_t idx )
     else if( from > idx ){
         memcpy( b->mem + idx, b->mem + from, len );
     }
+    else {
+        return BUF_OK;
+    }
     
     b->used = idx + len;
     ((char*)b->mem)[b->used] = 0;
@@ -172,10 +175,9 @@ int buf_strins( Buf_t *b, size_t cur, const char *str )
     {
         size_t len = strlen( str );
         
-        if( buf_increase( b, b->used + len + 1 ) == BUF_OK ){
+        if( buf_shift( b, cur, cur + len ) == BUF_OK ){
             // insert string
             memcpy( b->mem + cur, str, len );
-            ((char*)b->mem)[b->used] = 0;
             return BUF_OK;
         }
         
