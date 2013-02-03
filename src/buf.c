@@ -187,6 +187,22 @@ int buf_strins( Buf_t *b, size_t cur, const char *str )
     return ( errno = EINVAL );
 }
 
+int buf_strnins( Buf_t *b, size_t cur, const char *str, size_t len )
+{
+    if( str && cur < b->used )
+    {
+        if( buf_shift( b, cur, cur + len ) == BUF_OK ){
+            // insert string
+            memcpy( b->mem + cur, str, len );
+            return BUF_OK;
+        }
+        
+        return errno;
+    }
+    
+    return ( errno = EINVAL );
+}
+
 // replace all target string
 int buf_strsub( Buf_t *b, const char *str, const char *rep )
 {

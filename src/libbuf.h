@@ -73,6 +73,7 @@ int buf_strcat( Buf_t *b, const char *str );
 int buf_strncat( Buf_t *b, const char *str, size_t len );
 int buf_strccat( Buf_t *b, const unsigned char c );
 int buf_strins( Buf_t *b, size_t cur, const char *str );
+int buf_strnins( Buf_t *b, size_t cur, const char *str, size_t len );
 int buf_strsub( Buf_t *b, const char *str, const char *rep );
 int buf_strnsub( Buf_t *b, const char *str, const char *rep, size_t num );
 int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep );
