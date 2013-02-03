@@ -77,12 +77,13 @@ int buf_strsub( Buf_t *b, const char *str, const char *rep );
 int buf_strnsub( Buf_t *b, const char *str, const char *rep, size_t num );
 int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep );
 
-#define buf_isdegit(c)   ((c) >= '0' && (c) <= '9')
-#define _buf_sdec2uint(s,e,m)({ \
+#define buf_strisdegit(c)   ((c) >= '0' && (c) <= '9')
+// unsigned decimal string to unsigned integer
+#define _buf_strudec2uint(s,e,m)({ \
     uint64_t _v = 0; \
     uint64_t _c = *(s); \
     e = (s); \
-    while( buf_isdegit(_c) ){ \
+    while( buf_strisdegit(_c) ){ \
         if( _v > m || _v == m && *e > '5' ){ \
             errno = ERANGE; \
             break; \
@@ -92,10 +93,10 @@ int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep );
     } \
     _v; \
 })
-#define buf_sdec2u8(s,e)   _buf_sdec2uint(s,e,25)
-#define buf_sdec2u16(s,e)  _buf_sdec2uint(s,e,6553)
-#define buf_sdec2u32(s,e)  _buf_sdec2uint(s,e,429496729)
-#define buf_sdec2u64(s,e)  _buf_sdec2uint(s,e,1844674407370955161)
+#define buf_strudec2u8(s,e)   _buf_strudec2uint(s,e,25)
+#define buf_strudec2u16(s,e)  _buf_strudec2uint(s,e,6553)
+#define buf_strudec2u32(s,e)  _buf_strudec2uint(s,e,429496729)
+#define buf_strudec2u64(s,e)  _buf_strudec2uint(s,e,1844674407370955161)
 
 #endif
 
