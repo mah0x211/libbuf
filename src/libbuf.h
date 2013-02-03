@@ -67,8 +67,8 @@ int buf_realloc( Buf_t *b, size_t bytes );
 })
 int buf_shift( Buf_t *b, size_t from, size_t idx );
 
-int buf_strset( Buf_t *b, const char *str );
 int buf_strnset( Buf_t *b, const char *str, size_t len );
+#define buf_strset(b,s)     buf_strnset(b,s,strlen(s))
 int buf_strncat( Buf_t *b, const char *str, size_t len );
 #define buf_strcat(b,s)     buf_strncat(b,s,strlen(s))
 int buf_strccat( Buf_t *b, const unsigned char c );

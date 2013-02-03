@@ -85,25 +85,6 @@ int buf_shift( Buf_t *b, size_t from, size_t idx )
     return BUF_OK;
 }
 
-int buf_strset( Buf_t *b, const char *str )
-{
-    if( str )
-    {
-        size_t len = strlen( str );
-        
-        if( buf_increase( b, len + 1 ) == BUF_OK ){
-            memcpy( b->mem, str, len );
-            ((char*)b->mem)[len] = 0;
-            b->used = len;
-            return BUF_OK;
-        }
-        
-        return errno;
-    }
-    
-    return ( errno = EINVAL );
-}
-
 int buf_strnset( Buf_t *b, const char *str, size_t len )
 {
     if( len )
