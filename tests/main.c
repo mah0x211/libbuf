@@ -55,16 +55,16 @@ void test( void )
     TEST_CMP( b, "987654321BBBBBBBKLLcat tA" );
     
     TEST_FN( b, BUF_OK, buf_strins, 2, "X" );
-    TEST_CMP( b, "98X654321BBBBBBBKLLcat tA" );
+    TEST_CMP( b, "98X7654321BBBBBBBKLLcat tA" );
     
     TEST_FN( b, BUF_OK, buf_strsub, "B", "" );
-    TEST_CMP( b, "98X654321KLLcat tA" );
+    TEST_CMP( b, "98X7654321KLLcat tA" );
 
     TEST_FN( b, BUF_OK, buf_strnsub, "L", "B", 1 );
-    TEST_CMP( b, "98X654321KBLcat tA" );
+    TEST_CMP( b, "98X7654321KBLcat tA" );
     
     TEST_FN( b, BUF_OK, buf_strsub_range, 2, 12, "delete" );
-    TEST_CMP( b, "98deletecat tA" );
+    TEST_CMP( b, "98deleteLcat tA" );
     
     buf_dispose( b );
 }
