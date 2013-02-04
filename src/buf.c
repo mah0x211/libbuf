@@ -87,7 +87,7 @@ int buf_shift( Buf_t *b, size_t from, size_t idx )
 
 int buf_strnset( Buf_t *b, const char *str, size_t len )
 {
-    if( len )
+    if( str && len )
     {
         if( buf_increase( b, len + 1 ) == BUF_OK ){
             memcpy( b->mem, str, len );
