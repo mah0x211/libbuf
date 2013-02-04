@@ -85,7 +85,7 @@ int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep );
     uint64_t _c = *(s); \
     e = (s); \
     while( buf_strisdegit(_c) ){ \
-        if( _v > m || _v == m && *e > '5' ){ \
+        if( _v > m || ( _v == m && *e > '5' ) ){ \
             errno = ERANGE; \
             break; \
         } \
