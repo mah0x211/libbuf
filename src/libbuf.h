@@ -99,5 +99,21 @@ int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep );
 #define buf_strudec2u32(s,e)  _buf_strudec2uint(s,e,429496729)
 #define buf_strudec2u64(s,e)  _buf_strudec2uint(s,e,1844674407370955161)
 
+
+typedef struct {
+    char *str;
+    size_t len;
+    uint8_t nsub;
+    size_t num;
+    struct {
+        uint8_t sid;
+        size_t dist;
+    } *idx;
+} BufStrFmt_t;
+
+int buf_strfmt_init( BufStrFmt_t *fmt, const char *str, size_t len, uint8_t nsub );
+void buf_strfmt_dispose( BufStrFmt_t *fmt );
+char *buf_strfmt( BufStrFmt_t *fmt, uint8_t nsub, char **subs, size_t *len );
+
 #endif
 

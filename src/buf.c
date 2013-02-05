@@ -235,3 +235,155 @@ int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep )
 }
 
 
+int buf_strfmt_init( BufStrFmt_t *fmt, const char *str, size_t len, uint8_t nsub )
+{
+    // allocate template format
+    if( ( fmt->str = (char*)malloc( sizeof(char*) * len + 1 ) ) )
+    {
+        // allocate freeable-variable
+        if( ( fmt->idx = malloc(0) ) )
+        {
+            char *head = fmt->str;
+            char *ptr = NULL;
+            char *needle = NULL;
+            uint8_t sid = 0;
+            ptrdiff_t lastPos = 0;
+            
+            // TODO: have to do remove wasted left shift memcpy cost.
+            memcpy( (void*)fmt->str, str, len );
+            fmt->str[len] = 0;
+            fmt->len = len;
+            fmt->nsub = nsub;
+            fmt->num = 0;
+            
+            nsub++;
+            // find placeholder
+            while( ( ptr = memchr( head, '$', len ) ) )
+            {
+                // found escape sequence
+                if( head != ptr && *(ptr-1) == '\\' ){
+                    head = ptr + 1;
+                }
+                else
+                {
+                    // string decimal to uint
+                    needle = ptr + 1;
+                    errno = 0;
+                    sid = (uint8_t)buf_strudec2u8( needle, needle );
+                    len -= (uintptr_t)needle - (uintptr_t)head;
+                    // found placeholder symbol
+                    if( !errno && sid && sid < nsub )
+                    {
+                        fmt->len -= (uintptr_t)needle - (uintptr_t)ptr;
+                        // move right to left
+                        memcpy( ptr, needle, len );
+                        // set null terminator
+                        ptr[len] = 0;
+                        // realloc for formatter
+                        if( ( fmt->idx = realloc( fmt->idx, sizeof( *fmt->idx ) * ( fmt->num + 1 ) ) ) ){
+                            // save substitution-id and distance(length)
+                            fmt->idx[fmt->num].sid = sid;
+                            fmt->idx[fmt->num].dist = (uintptr_t)ptr - (uintptr_t)fmt->str - lastPos;
+                            lastPos += fmt->idx[fmt->num].dist;
+                            // increment number of substitution index
+                            fmt->num++;
+                        }
+                        // error
+                        else {
+                            buf_strfmt_dispose( fmt );
+                            return errno;
+                        }
+                        // set next-head
+                        head = ptr;
+                    }
+                    else {
+                        // set next-head
+                        head = needle;
+                    }
+                }
+            }
+            
+            return BUF_OK;
+        }
+        free( (void*)fmt->str );
+    }
+    
+    return errno;
+}
+
+void buf_strfmt_dispose( BufStrFmt_t *fmt )
+{
+    free( (void*)fmt->str );
+    free( (void*)fmt->idx );
+}
+
+char *buf_strfmt( BufStrFmt_t *fmt, uint8_t nsub, char **subs, size_t *len )
+{
+    size_t blen = fmt->len;
+    // allocate formatted string buf
+    char *buf = (char*)malloc( sizeof( char ) * blen + 1 );
+    
+    *len = 0;
+    if( buf )
+    {
+        // substitution group > 0
+        if( nsub )
+        {
+            char *head = fmt->str;
+            char *ptr = buf;
+            char *sub = NULL;
+            size_t slen = 0;
+            uint8_t sid = 0;
+            ptrdiff_t pos = 0;
+            size_t i = 0;
+            
+            for( i = 0; i < fmt->num; i++ )
+            {
+                // has sub-string
+                sid = fmt->idx[i].sid;
+                if( sid <= nsub && 
+                    ( sub = subs[sid-1] ) && 
+                    ( slen = strlen( sub ) ) )
+                {
+                    // expand buffer and copy sub-string
+                    blen += slen;
+                    if( ( buf = realloc( (void*)buf, sizeof(char) * blen + 1 ) ) ){
+                        ptr = buf + pos;
+                        memcpy( ptr + fmt->idx[i].dist, sub, slen );
+                        // move position
+                        pos += slen;
+                    }
+                    // error
+                    else {
+                        free( (void*)buf );
+                        return NULL;
+                    }
+                }
+                
+                // copy format strings
+                memcpy( ptr, (void*)head, fmt->idx[i].dist );
+                // set next head
+                head += fmt->idx[i].dist;
+                // set next position
+                pos += fmt->idx[i].dist;
+                ptr = buf + pos;
+            }
+            
+            // format strings remains
+            if( *head ){
+                memcpy( (void*)ptr, (void*)head, 
+                        fmt->len - ( (uintptr_t)head - (uintptr_t)fmt->str ) );
+            }
+        }
+        // copy all of format strings
+        else {
+            memcpy( (void*)buf, (void*)fmt->str, blen );
+        }
+        // set terminator
+        buf[blen] = 0;
+        *len = blen;
+    }
+    
+    return buf;
+}
+
