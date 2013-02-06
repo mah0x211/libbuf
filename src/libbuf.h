@@ -74,9 +74,15 @@ int buf_strncat( Buf_t *b, const char *str, size_t len );
 int buf_strccat( Buf_t *b, const unsigned char c );
 int buf_strnins( Buf_t *b, size_t cur, const char *str, size_t len );
 #define buf_strins(b,c,s)   buf_strnins(b,c,s,strlen(s))
-int buf_strsub( Buf_t *b, const char *str, const char *rep );
-int buf_strnsub( Buf_t *b, const char *str, const char *rep, size_t num );
-int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep );
+int buf_strnsub( Buf_t *b, const char *str, size_t len, const char *rep,
+                 size_t rlen );
+#define buf_strsub(b,s,r)   buf_strnsub(b,s,strlen(s),r,strlen(r))
+int buf_strnsub_n( Buf_t *b, const char *str, size_t len, const char *rep, 
+                  size_t rlen, size_t num );
+#define buf_strsub_n(b,s,r,n)   buf_strnsub_n(b,s,strlen(s),r,strlen(r),n)
+int buf_strnsub_range( Buf_t *b, size_t from, size_t to, const char *rep,
+                       size_t len );
+#define buf_strsub_range(b,f,t,r)   buf_strnsub_range(b,f,t,r,strlen(r))
 
 #define buf_strisdegit(c)   ((c) >= '0' && (c) <= '9')
 // unsigned decimal string to unsigned integer

@@ -148,13 +148,12 @@ int buf_strnins( Buf_t *b, size_t cur, const char *str, size_t len )
 }
 
 // replace all target string
-int buf_strsub( Buf_t *b, const char *str, const char *rep )
+int buf_strnsub( Buf_t *b, const char *str, size_t len, const char *rep, 
+                 size_t rlen )
 {
     if( str && rep )
     {
         char *match = (char*)b->mem;
-        size_t len = strlen( str );
-        size_t rlen = strlen( rep );
         ssize_t shift = rlen - len;
         ptrdiff_t cur;
         
@@ -178,13 +177,12 @@ int buf_strsub( Buf_t *b, const char *str, const char *rep )
     return ( errno = EINVAL );
 }
 
-int buf_strnsub( Buf_t *b, const char *str, const char *rep, size_t num )
+int buf_strnsub_n( Buf_t *b, const char *str, size_t len, const char *rep, 
+                   size_t rlen, size_t num )
 {
     if( str && rep && num )
     {
         char *match = (char*)b->mem;
-        size_t len = strlen( str );
-        size_t rlen = strlen( rep );
         ssize_t shift = rlen - len;
         ptrdiff_t cur;
         
@@ -211,11 +209,11 @@ int buf_strnsub( Buf_t *b, const char *str, const char *rep, size_t num )
     return ( errno = EINVAL );
 }
 
-int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep )
+int buf_strnsub_range( Buf_t *b, size_t from, size_t to, const char *rep,
+                      size_t len )
 {
     if( to < b->used && from < to )
     {
-        size_t len = strlen( rep );
         size_t rlen = to - from;
         size_t shift = len - rlen;
         
