@@ -352,7 +352,7 @@ void buf_strfmt_dispose( BufStrFmt_t *fmt )
     free( (void*)fmt->idx );
 }
 
-char *buf_strfmt( BufStrFmt_t *fmt, uint8_t nsub, char **subs, size_t *len )
+char *buf_strfmt( BufStrFmt_t *fmt, uint8_t nsub, const char **subs, size_t *len )
 {
     size_t blen = fmt->len;
     // allocate formatted string buf
@@ -366,7 +366,7 @@ char *buf_strfmt( BufStrFmt_t *fmt, uint8_t nsub, char **subs, size_t *len )
         {
             char *head = fmt->str;
             char *ptr = buf;
-            char *sub = NULL;
+            const char *sub = NULL;
             size_t slen = 0;
             uint8_t sid = 0;
             ptrdiff_t pos = 0;

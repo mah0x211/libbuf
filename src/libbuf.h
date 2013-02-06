@@ -114,7 +114,7 @@ typedef struct {
 
 int buf_strfmt_init( BufStrFmt_t *fmt, const char *str, size_t len, uint8_t nsub );
 void buf_strfmt_dispose( BufStrFmt_t *fmt );
-char *buf_strfmt( BufStrFmt_t *fmt, uint8_t nsub, char **subs, size_t *len );
+char *buf_strfmt( BufStrFmt_t *fmt, uint8_t nsub, const char **subs, size_t *len );
 
 #endif
 
