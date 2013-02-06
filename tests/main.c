@@ -79,7 +79,7 @@ void test( void )
     TEST_FN( b, BUF_OK, buf_strsub, "B", "" );
     TEST_CMP( b, "98X7654321KLLcat tA" );
 
-    TEST_FN( b, BUF_OK, buf_strnsub, "L", "B", 1 );
+    TEST_FN( b, BUF_OK, buf_strsub_n, "L", "B", 1 );
     TEST_CMP( b, "98X7654321KBLcat tA" );
     
     TEST_FN( b, BUF_OK, buf_strsub_range, 2, 12, "delete" );
