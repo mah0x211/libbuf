@@ -238,74 +238,109 @@ int buf_strsub_range( Buf_t *b, size_t from, size_t to, const char *rep )
 int buf_strfmt_init( BufStrFmt_t *fmt, const char *str, size_t len, uint8_t nsub )
 {
     // allocate template format
-    if( ( fmt->str = (char*)malloc( sizeof(char*) * len + 1 ) ) )
+    char *buf = (char*)malloc( sizeof(char*) * len + 1 );
+    
+    if( buf )
     {
         // allocate freeable-variable
-        if( ( fmt->idx = malloc(0) ) )
+        BufStrFmtIdx_t *idx = malloc(0);
+        
+        if( idx )
         {
-            char *head = fmt->str;
-            char *ptr = NULL;
+            size_t remain = len;
+            size_t newlen = 0;
+            size_t num = 0;
+            char *ptr = buf;
+            char *head = (char*)str;
+            char *tail = NULL;
             char *needle = NULL;
             uint8_t sid = 0;
-            ptrdiff_t lastPos = 0;
-            
-            // TODO: have to do remove wasted left shift memcpy cost.
-            memcpy( (void*)fmt->str, str, len );
-            fmt->str[len] = 0;
-            fmt->len = len;
-            fmt->nsub = nsub;
-            fmt->num = 0;
+            ptrdiff_t backward = 0;
             
             nsub++;
             // find placeholder
-            while( ( ptr = memchr( head, '$', len ) ) )
+            while( ( tail = memchr( head, '$', remain ) ) )
             {
                 // found escape sequence
-                if( head != ptr && *(ptr-1) == '\\' ){
-                    head = ptr + 1;
+                if( head != tail && *(tail-1) == '\\' ){
+                    tail += 1;
+                    len = (uintptr_t)tail - (uintptr_t)head;
+                    // set next head
+                    head = tail;
+                    // set remain, add backward-length
+                    remain -= len;
+                    backward += len;
                 }
                 else
                 {
-                    // string decimal to uint
-                    needle = ptr + 1;
+                    // string decimal to uint8
+                    needle = tail + 1;
                     errno = 0;
                     sid = (uint8_t)buf_strudec2u8( needle, needle );
-                    len -= (uintptr_t)needle - (uintptr_t)head;
+                    // set remain, move head to backward
+                    remain -= (uintptr_t)needle - (uintptr_t)head;
+                    head -= backward;
+                    
                     // found placeholder symbol
                     if( !errno && sid && sid < nsub )
                     {
-                        fmt->len -= (uintptr_t)needle - (uintptr_t)ptr;
-                        // move right to left
-                        memcpy( ptr, needle, len );
-                        // set null terminator
-                        ptr[len] = 0;
+                        // copy str to buffer, update buffer-length
+                        len = (uintptr_t)tail - (uintptr_t)head;
+                        memcpy( ptr, head, len );
+                        newlen += len;
+                        // move to buffer-tail
+                        ptr += len;
+                        
                         // realloc for formatter
-                        if( ( fmt->idx = realloc( fmt->idx, sizeof( *fmt->idx ) * ( fmt->num + 1 ) ) ) ){
-                            // save substitution-id and distance(length)
-                            fmt->idx[fmt->num].sid = sid;
-                            fmt->idx[fmt->num].dist = (uintptr_t)ptr - (uintptr_t)fmt->str - lastPos;
-                            lastPos += fmt->idx[fmt->num].dist;
+                        if( ( idx = realloc( idx, sizeof( BufStrFmtIdx_t ) * 
+                                             ( num + 1 ) ) ) ){
+                            // save substitution-id and distance(length) and
                             // increment number of substitution index
-                            fmt->num++;
+                            idx[num].sid = sid;
+                            idx[num].dist = len;
+                            num++;
                         }
                         // error
                         else {
-                            buf_strfmt_dispose( fmt );
+                            free( (void*)buf );
+                            free( (void*)idx );
                             return errno;
                         }
-                        // set next-head
-                        head = ptr;
                     }
                     else {
-                        // set next-head
-                        head = needle;
+                        // copy str to buffer, update buffer-length
+                        len = (uintptr_t)needle - (uintptr_t)head;
+                        memcpy( ptr, head, len );
+                        newlen += len;
+                        // move buffer-tail
+                        ptr += len;
                     }
+                    // set next-head, reset backward-length
+                    head = needle;
+                    backward = 0;
                 }
             }
             
+            // format strings remains
+            if( *head ){
+                // move head to backward, copy str to buffer
+                head -= backward;
+                memcpy( (void*)ptr, (void*)head, remain );
+                newlen += remain;
+            }
+
+            // set null terminator
+            buf[newlen] = 0;
+            
+            fmt->str = buf;
+            fmt->len = newlen;
+            fmt->nsub = nsub;
+            fmt->num = num;
+            fmt->idx = idx;
+            
             return BUF_OK;
         }
-        free( (void*)fmt->str );
+        free( (void*)buf );
     }
     
     return errno;
