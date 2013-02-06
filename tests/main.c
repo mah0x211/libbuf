@@ -100,8 +100,8 @@ void test2( void )
     size_t len = strlen( str );
     uint8_t ngrp = 5;
     BufStrFmt_t fmt;
-    char *subs[] = { "R1", "R2", "R3", "R4", "R5" };
-    char *subs2[] = { "R5", "R4", "R3", "R2", "R1" };
+    const char *subs[] = { "R1", "R2", "R3", "R4", "R5" };
+    const char *subs2[] = { "R5", "R4", "R3", "R2", "R1" };
     char *formatted = NULL;
     
     TEST_FN2( &fmt, BUF_OK, buf_strfmt_init, str, len, ngrp );
