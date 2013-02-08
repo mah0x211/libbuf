@@ -212,7 +212,7 @@ int buf_strnsub_n( Buf_t *b, const char *str, size_t len, const char *rep,
 int buf_strnsub_range( Buf_t *b, size_t from, size_t to, const char *rep,
                       size_t len )
 {
-    if( to < b->used && from < to )
+    if( to <= b->used && from < to )
     {
         size_t rlen = to - from;
         size_t shift = len - rlen;
