@@ -85,6 +85,7 @@ int buf_strnsub_range( Buf_t *b, size_t from, size_t to, const char *rep,
 #define buf_strsub_range(b,f,t,r)   buf_strnsub_range(b,f,t,r,strlen(r))
 
 #define buf_strisdegit(c)   ((c) >= '0' && (c) <= '9')
+#define buf_strisodegit(c)  ((c) >= '0' && (c) <= '7')
 // unsigned decimal string to unsigned integer
 #define _buf_strudec2uint(s,e,m)({ \
     uint64_t _v = 0; \
@@ -104,6 +105,26 @@ int buf_strnsub_range( Buf_t *b, size_t from, size_t to, const char *rep,
 #define buf_strudec2u16(s,e)  _buf_strudec2uint(s,e,6553)
 #define buf_strudec2u32(s,e)  _buf_strudec2uint(s,e,429496729)
 #define buf_strudec2u64(s,e)  _buf_strudec2uint(s,e,1844674407370955161)
+
+// octal string to unsigned integer
+#define _buf_stroct2uint(s,e,m)({ \
+    uint64_t _v = 0; \
+    uint64_t _c = *(s); \
+    e = (s); \
+    while( buf_strisodegit(_c) ){ \
+        if( _v > m ){ \
+            errno = ERANGE; \
+            break; \
+        } \
+        _v = _c - '0' + ( _v << 3 ); \
+        _c = *(++e); \
+    } \
+    _v; \
+})
+#define buf_stroct2u8(s,e)  _buf_stroct2uint(s,e,31)
+#define buf_stroct2u16(s,e)  _buf_stroct2uint(s,e,8191)
+#define buf_stroct2u32(s,e)  _buf_stroct2uint(s,e,536870911)
+#define buf_stroct2u64(s,e)  _buf_stroct2uint(s,e,2305843009213693951)
 
 typedef struct {
     uint8_t sid;
