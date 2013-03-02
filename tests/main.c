@@ -49,8 +49,8 @@
 
 void test( void )
 {
-    Buf_t buf;
-    Buf_t *b = &buf;
+    buf_t buf;
+    buf_t *b = &buf;
     size_t unit = 10;
     
     if( buf_init( b, unit ) != BUF_OK ){
@@ -99,7 +99,7 @@ void test2( void )
     const char *str = "group\\$1,gr$4oup$3, group $2 gr$3oup $5form$2at$1end";
     size_t len = strlen( str );
     uint8_t ngrp = 5;
-    BufStrFmt_t fmt;
+    buf_strfmt_t fmt;
     const char *subs[] = { "R1", "R2", "R3", "R4", "R5" };
     const char *subs2[] = { "R5", "R4", "R3", "R2", "R1" };
     char *formatted = NULL;

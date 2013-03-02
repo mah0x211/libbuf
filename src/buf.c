@@ -29,9 +29,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-int buf_init( Buf_t *b, size_t unit )
+int buf_init( buf_t *b, size_t unit )
 {
-    memset( (void*)b, 0, sizeof( Buf_t ) );
+    memset( (void*)b, 0, sizeof( buf_t ) );
     if( ( b->mem = malloc( unit ) ) ){
         b->unit = b->total = unit;
         b->used = 0;
@@ -41,12 +41,12 @@ int buf_init( Buf_t *b, size_t unit )
     return errno;
 }
 
-void buf_dispose( Buf_t *b )
+void buf_dispose( buf_t *b )
 {
     free( (void*)b->mem );
 }
 
-int buf_realloc( Buf_t *b, size_t bytes )
+int buf_realloc( buf_t *b, size_t bytes )
 {
     void *buf = realloc( b->mem, bytes );
     
@@ -59,7 +59,7 @@ int buf_realloc( Buf_t *b, size_t bytes )
     return errno;
 }
 
-int buf_shift( Buf_t *b, size_t from, size_t idx )
+int buf_shift( buf_t *b, size_t from, size_t idx )
 {
     size_t len = b->used - from;
     
@@ -85,7 +85,7 @@ int buf_shift( Buf_t *b, size_t from, size_t idx )
     return BUF_OK;
 }
 
-int buf_strnset( Buf_t *b, const char *str, size_t len )
+int buf_strnset( buf_t *b, const char *str, size_t len )
 {
     if( str && len )
     {
@@ -101,7 +101,7 @@ int buf_strnset( Buf_t *b, const char *str, size_t len )
     return ( errno = EINVAL );
 }
 
-int buf_strncat( Buf_t *b, const char *str, size_t len )
+int buf_strncat( buf_t *b, const char *str, size_t len )
 {
     if( str && len )
     {
@@ -119,7 +119,7 @@ int buf_strncat( Buf_t *b, const char *str, size_t len )
 }
 
 
-int buf_strccat( Buf_t *b, const unsigned char c )
+int buf_strccat( buf_t *b, const unsigned char c )
 {
     if( buf_increase( b, b->used + 2 ) == BUF_OK ){
         ((char*)b->mem)[b->used] = c;
@@ -131,7 +131,7 @@ int buf_strccat( Buf_t *b, const unsigned char c )
     return errno;
 }
 
-int buf_strnins( Buf_t *b, size_t cur, const char *str, size_t len )
+int buf_strnins( buf_t *b, size_t cur, const char *str, size_t len )
 {
     if( str && cur < b->used )
     {
@@ -148,7 +148,7 @@ int buf_strnins( Buf_t *b, size_t cur, const char *str, size_t len )
 }
 
 // replace all target string
-int buf_strnsub( Buf_t *b, const char *str, size_t len, const char *rep, 
+int buf_strnsub( buf_t *b, const char *str, size_t len, const char *rep, 
                  size_t rlen )
 {
     if( str && rep )
@@ -177,7 +177,7 @@ int buf_strnsub( Buf_t *b, const char *str, size_t len, const char *rep,
     return ( errno = EINVAL );
 }
 
-int buf_strnsub_n( Buf_t *b, const char *str, size_t len, const char *rep, 
+int buf_strnsub_n( buf_t *b, const char *str, size_t len, const char *rep, 
                    size_t rlen, size_t num )
 {
     if( str && rep && num )
@@ -209,7 +209,7 @@ int buf_strnsub_n( Buf_t *b, const char *str, size_t len, const char *rep,
     return ( errno = EINVAL );
 }
 
-int buf_strnsub_range( Buf_t *b, size_t from, size_t to, const char *rep,
+int buf_strnsub_range( buf_t *b, size_t from, size_t to, const char *rep,
                       size_t len )
 {
     if( to <= b->used && from < to )
@@ -233,7 +233,7 @@ int buf_strnsub_range( Buf_t *b, size_t from, size_t to, const char *rep,
 }
 
 
-int buf_strfmt_init( BufStrFmt_t *fmt, const char *str, size_t len, uint8_t nsub )
+int buf_strfmt_init( buf_strfmt_t *fmt, const char *str, size_t len, uint8_t nsub )
 {
     // allocate template format
     char *buf = (char*)malloc( sizeof(char*) * len + 1 );
@@ -241,7 +241,7 @@ int buf_strfmt_init( BufStrFmt_t *fmt, const char *str, size_t len, uint8_t nsub
     if( buf )
     {
         // allocate freeable-variable
-        BufStrFmtIdx_t *idx = malloc(0);
+        buf_strfmt_idx *idx = malloc(0);
         
         if( idx )
         {
@@ -290,7 +290,7 @@ int buf_strfmt_init( BufStrFmt_t *fmt, const char *str, size_t len, uint8_t nsub
                         ptr += len;
                         
                         // realloc for formatter
-                        if( ( idx = realloc( idx, sizeof( BufStrFmtIdx_t ) * 
+                        if( ( idx = realloc( idx, sizeof( buf_strfmt_idx ) * 
                                              ( num + 1 ) ) ) ){
                             // save substitution-id and distance(length) and
                             // increment number of substitution index
@@ -344,13 +344,13 @@ int buf_strfmt_init( BufStrFmt_t *fmt, const char *str, size_t len, uint8_t nsub
     return errno;
 }
 
-void buf_strfmt_dispose( BufStrFmt_t *fmt )
+void buf_strfmt_dispose( buf_strfmt_t *fmt )
 {
     free( (void*)fmt->str );
     free( (void*)fmt->idx );
 }
 
-char *buf_strfmt( BufStrFmt_t *fmt, uint8_t nsub, const char **subs, size_t *len )
+char *buf_strfmt( buf_strfmt_t *fmt, uint8_t nsub, const char **subs, size_t *len )
 {
     size_t blen = fmt->len;
     // allocate formatted string buf

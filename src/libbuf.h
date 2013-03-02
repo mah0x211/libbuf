@@ -44,18 +44,18 @@ typedef struct {
     size_t used;
     size_t total;
     void *mem;
-} Buf_t;
+} buf_t;
 
 #define buf_unit(b)     ((b)->unit)
 #define buf_used(b)     ((b)->used)
 #define buf_total(b)    ((b)->total)
 #define buf_mem(b)      ((b)->mem)
 
-int buf_init( Buf_t *b, size_t unit );
-void buf_dispose( Buf_t *b );
-void buf_reset( Buf_t *b );
+int buf_init( buf_t *b, size_t unit );
+void buf_dispose( buf_t *b );
+void buf_reset( buf_t *b );
 
-int buf_realloc( Buf_t *b, size_t bytes );
+int buf_realloc( buf_t *b, size_t bytes );
 #define buf_increase(b,B)({ \
     int _rc = BUF_OK; \
     size_t _bytes = (B); \
@@ -65,22 +65,22 @@ int buf_realloc( Buf_t *b, size_t bytes );
     } \
     _rc; \
 })
-int buf_shift( Buf_t *b, size_t from, size_t idx );
+int buf_shift( buf_t *b, size_t from, size_t idx );
 
-int buf_strnset( Buf_t *b, const char *str, size_t len );
+int buf_strnset( buf_t *b, const char *str, size_t len );
 #define buf_strset(b,s)     buf_strnset(b,s,strlen(s))
-int buf_strncat( Buf_t *b, const char *str, size_t len );
+int buf_strncat( buf_t *b, const char *str, size_t len );
 #define buf_strcat(b,s)     buf_strncat(b,s,strlen(s))
-int buf_strccat( Buf_t *b, const unsigned char c );
-int buf_strnins( Buf_t *b, size_t cur, const char *str, size_t len );
+int buf_strccat( buf_t *b, const unsigned char c );
+int buf_strnins( buf_t *b, size_t cur, const char *str, size_t len );
 #define buf_strins(b,c,s)   buf_strnins(b,c,s,strlen(s))
-int buf_strnsub( Buf_t *b, const char *str, size_t len, const char *rep,
+int buf_strnsub( buf_t *b, const char *str, size_t len, const char *rep,
                  size_t rlen );
 #define buf_strsub(b,s,r)   buf_strnsub(b,s,strlen(s),r,strlen(r))
-int buf_strnsub_n( Buf_t *b, const char *str, size_t len, const char *rep, 
+int buf_strnsub_n( buf_t *b, const char *str, size_t len, const char *rep, 
                   size_t rlen, size_t num );
 #define buf_strsub_n(b,s,r,n)   buf_strnsub_n(b,s,strlen(s),r,strlen(r),n)
-int buf_strnsub_range( Buf_t *b, size_t from, size_t to, const char *rep,
+int buf_strnsub_range( buf_t *b, size_t from, size_t to, const char *rep,
                        size_t len );
 #define buf_strsub_range(b,f,t,r)   buf_strnsub_range(b,f,t,r,strlen(r))
 
@@ -129,19 +129,19 @@ int buf_strnsub_range( Buf_t *b, size_t from, size_t to, const char *rep,
 typedef struct {
     uint8_t sid;
     size_t dist;
-} BufStrFmtIdx_t;
+} buf_strfmt_idx;
 
 typedef struct {
     char *str;
     size_t len;
     uint8_t nsub;
     size_t num;
-    BufStrFmtIdx_t *idx;
-} BufStrFmt_t;
+    buf_strfmt_idx *idx;
+} buf_strfmt_t;
 
-int buf_strfmt_init( BufStrFmt_t *fmt, const char *str, size_t len, uint8_t nsub );
-void buf_strfmt_dispose( BufStrFmt_t *fmt );
-char *buf_strfmt( BufStrFmt_t *fmt, uint8_t nsub, const char **subs, size_t *len );
+int buf_strfmt_init( buf_strfmt_t *fmt, const char *str, size_t len, uint8_t nsub );
+void buf_strfmt_dispose( buf_strfmt_t *fmt );
+char *buf_strfmt( buf_strfmt_t *fmt, uint8_t nsub, const char **subs, size_t *len );
 
 #endif
 
