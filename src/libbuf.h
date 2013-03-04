@@ -53,7 +53,6 @@ typedef struct {
 
 int buf_init( buf_t *b, size_t unit );
 void buf_dispose( buf_t *b );
-void buf_reset( buf_t *b );
 
 int buf_realloc( buf_t *b, size_t bytes );
 #define buf_increase(b,B)({ \
