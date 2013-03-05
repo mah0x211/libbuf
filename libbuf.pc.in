@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libbuf
+Description: string buffer library.
+Version: @PACKAGE_VERSION@
+Libs: -L${libdir} -lbuf
+Cflags: -I${includedir}
