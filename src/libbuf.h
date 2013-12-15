@@ -1,8 +1,7 @@
 /*
  *  libbuf.h
+ *
  *  Created by Masatoshi Teruya on 13/01/30.
- */
-/*
  *  Copyright (C) 2013 Masatoshi Teruya
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -120,7 +119,7 @@ int buf_strnsub_range( buf_t *b, size_t from, size_t to, const char *rep,
     } \
     _v; \
 })
-#define buf_stroct2u8(s,e)  _buf_stroct2uint(s,e,31)
+#define buf_stroct2u8(s,e)   _buf_stroct2uint(s,e,31)
 #define buf_stroct2u16(s,e)  _buf_stroct2uint(s,e,8191)
 #define buf_stroct2u32(s,e)  _buf_stroct2uint(s,e,536870911)
 #define buf_stroct2u64(s,e)  _buf_stroct2uint(s,e,2305843009213693951)
