@@ -43,7 +43,10 @@ int buf_init( buf_t *b, size_t unit )
 
 void buf_dispose( buf_t *b )
 {
-    free( (void*)b->mem );
+    if( b->mem ){
+        free( (void*)b->mem );
+        b->mem = NULL;
+    }
 }
 
 int buf_realloc( buf_t *b, size_t bytes )
