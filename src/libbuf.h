@@ -28,7 +28,6 @@
 
 #include <unistd.h>
 #include <stddef.h>
-#include <stdint.h>
 #include <errno.h>
 
 // return code

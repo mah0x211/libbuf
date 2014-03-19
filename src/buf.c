@@ -125,7 +125,7 @@ int buf_strncat( buf_t *b, const char *str, size_t len )
 int buf_strccat( buf_t *b, const unsigned char c )
 {
     if( buf_increase( b, b->used + 2 ) == BUF_OK ){
-        ((char*)b->mem)[b->used] = c;
+        ((unsigned char*)b->mem)[b->used] = c;
         b->used += 1;
         ((char*)b->mem)[b->used] = 0;
         return BUF_OK;
@@ -157,15 +157,16 @@ int buf_strnsub( buf_t *b, const char *str, size_t len, const char *rep,
     if( str && rep )
     {
         char *match = (char*)b->mem;
-        ssize_t shift = rlen - len;
+        ptrdiff_t shift = (ptrdiff_t)(rlen - len);
         ptrdiff_t cur;
         
         while( ( match = strstr( match, str ) ) )
         {
-            cur = (uintptr_t)match - (uintptr_t)b->mem;
+            cur = (ptrdiff_t)match - (ptrdiff_t)b->mem;
             
             if( shift != 0 && 
-                buf_shift( b, cur + len, cur + len + shift ) != BUF_OK ){
+                buf_shift( b, (size_t)(cur + (ptrdiff_t)len), 
+                          (size_t)(cur + (ptrdiff_t)len + shift) ) != BUF_OK ){
                 return errno;
             }
             else if( rlen ){
@@ -186,14 +187,15 @@ int buf_strnsub_n( buf_t *b, const char *str, size_t len, const char *rep,
     if( str && rep && num )
     {
         char *match = (char*)b->mem;
-        ssize_t shift = rlen - len;
+        ptrdiff_t shift = (ptrdiff_t)(rlen - len);
         ptrdiff_t cur;
         
         while( ( match = strstr( match, str ) ) )
         {
-            cur = (uintptr_t)match - (uintptr_t)b->mem;
+            cur = (ptrdiff_t)match - (ptrdiff_t)b->mem;
             if( shift != 0 && 
-                buf_shift( b, cur + len, cur + len + shift ) != BUF_OK ){
+                buf_shift( b, (size_t)(cur + (ptrdiff_t)len), 
+                          (size_t)(cur + (ptrdiff_t)len + shift) ) != BUF_OK ){
                 return errno;
             }
             else if( rlen ){
