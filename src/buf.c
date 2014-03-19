@@ -162,11 +162,11 @@ int buf_strnsub( buf_t *b, const char *str, size_t len, const char *rep,
         
         while( ( match = strstr( match, str ) ) )
         {
-            cur = (ptrdiff_t)match - (ptrdiff_t)b->mem;
+            cur = (intptr_t)match - (intptr_t)b->mem;
             
             if( shift != 0 && 
-                buf_shift( b, (size_t)(cur + (ptrdiff_t)len), 
-                          (size_t)(cur + (ptrdiff_t)len + shift) ) != BUF_OK ){
+                buf_shift( b, (size_t)cur + len, 
+                          (size_t)(cur + shift) + len ) != BUF_OK ){
                 return errno;
             }
             else if( rlen ){
@@ -192,10 +192,10 @@ int buf_strnsub_n( buf_t *b, const char *str, size_t len, const char *rep,
         
         while( ( match = strstr( match, str ) ) )
         {
-            cur = (ptrdiff_t)match - (ptrdiff_t)b->mem;
+            cur = (intptr_t)match - (intptr_t)b->mem;
             if( shift != 0 && 
-                buf_shift( b, (size_t)(cur + (ptrdiff_t)len), 
-                          (size_t)(cur + (ptrdiff_t)len + shift) ) != BUF_OK ){
+                buf_shift( b, (size_t)cur + len, 
+                          (size_t)(cur + shift) + len ) != BUF_OK ){
                 return errno;
             }
             else if( rlen ){
