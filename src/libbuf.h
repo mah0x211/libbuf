@@ -65,6 +65,8 @@ int buf_realloc( buf_t *b, size_t bytes );
 })
 int buf_shift( buf_t *b, size_t from, size_t idx );
 
+
+/* string manipulation API */
 int buf_strnset( buf_t *b, const char *str, size_t len );
 #define buf_strset(b,s)     buf_strnset(b,s,strlen(s))
 int buf_strncat( buf_t *b, const char *str, size_t len );
@@ -82,64 +84,6 @@ int buf_strnsub_range( buf_t *b, size_t from, size_t to, const char *rep,
                        size_t len );
 #define buf_strsub_range(b,f,t,r)   buf_strnsub_range(b,f,t,r,strlen(r))
 
-#define buf_strisdegit(c)   ((c) >= '0' && (c) <= '9')
-#define buf_strisodegit(c)  ((c) >= '0' && (c) <= '7')
-// unsigned decimal string to unsigned integer
-#define _buf_strudec2uint(s,e,m)({ \
-    uint64_t _v = 0; \
-    uint64_t _c = *(s); \
-    e = (s); \
-    while( buf_strisdegit(_c) ){ \
-        if( _v > m || ( _v == m && *e > '5' ) ){ \
-            errno = ERANGE; \
-            break; \
-        } \
-        _v = _c - '0' + _v * 10; \
-        _c = *(++e); \
-    } \
-    _v; \
-})
-#define buf_strudec2u8(s,e)   _buf_strudec2uint(s,e,25)
-#define buf_strudec2u16(s,e)  _buf_strudec2uint(s,e,6553)
-#define buf_strudec2u32(s,e)  _buf_strudec2uint(s,e,429496729)
-#define buf_strudec2u64(s,e)  _buf_strudec2uint(s,e,1844674407370955161)
-
-// octal string to unsigned integer
-#define _buf_stroct2uint(s,e,m)({ \
-    uint64_t _v = 0; \
-    uint64_t _c = *(s); \
-    e = (s); \
-    while( buf_strisodegit(_c) ){ \
-        if( _v > m ){ \
-            errno = ERANGE; \
-            break; \
-        } \
-        _v = _c - '0' + ( _v << 3 ); \
-        _c = *(++e); \
-    } \
-    _v; \
-})
-#define buf_stroct2u8(s,e)   _buf_stroct2uint(s,e,31)
-#define buf_stroct2u16(s,e)  _buf_stroct2uint(s,e,8191)
-#define buf_stroct2u32(s,e)  _buf_stroct2uint(s,e,536870911)
-#define buf_stroct2u64(s,e)  _buf_stroct2uint(s,e,2305843009213693951)
-
-typedef struct {
-    uint8_t sid;
-    size_t dist;
-} buf_strfmt_idx;
-
-typedef struct {
-    char *str;
-    size_t len;
-    uint8_t nsub;
-    size_t num;
-    buf_strfmt_idx *idx;
-} buf_strfmt_t;
-
-int buf_strfmt_init( buf_strfmt_t *fmt, const char *str, size_t len, uint8_t nsub );
-void buf_strfmt_dispose( buf_strfmt_t *fmt );
-char *buf_strfmt( buf_strfmt_t *fmt, uint8_t nsub, const char **subs, size_t *len );
 
 #endif
 

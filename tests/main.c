@@ -94,43 +94,11 @@ void test( void )
     buf_dispose( b );
 }
 
-void test2( void )
-{
-    const char *str = "group\\$1,gr$4oup$3, group $2 gr$3oup $5form$2at$1end";
-    size_t len = strlen( str );
-    uint8_t ngrp = 5;
-    buf_strfmt_t fmt;
-    const char *subs[] = { "R1", "R2", "R3", "R4", "R5" };
-    const char *subs2[] = { "R5", "R4", "R3", "R2", "R1" };
-    char *formatted = NULL;
-    
-    TEST_FN2( &fmt, BUF_OK, buf_strfmt_init, str, len, ngrp );
-    TEST_CMP2( fmt.str, "group\\$1,group, group  group formatend" );
-    
-    formatted = TEST_FN3( &fmt, buf_strfmt, 1, subs, &len );
-    TEST_CMP2( formatted, "group\\$1,group, group  group formatR1end" );
-    formatted = TEST_FN3( &fmt, buf_strfmt, 2, subs, &len );
-    TEST_CMP2( formatted, "group\\$1,group, group R2 group formR2atR1end" );
-    formatted = TEST_FN3( &fmt, buf_strfmt, 3, subs, &len );
-    TEST_CMP2( formatted, "group\\$1,groupR3, group R2 grR3oup formR2atR1end" );
-    formatted = TEST_FN3( &fmt, buf_strfmt, 4, subs, &len );
-    TEST_CMP2( formatted, "group\\$1,grR4oupR3, group R2 grR3oup formR2atR1end" );
-    formatted = TEST_FN3( &fmt, buf_strfmt, 5, subs, &len );
-    TEST_CMP2( formatted, "group\\$1,grR4oupR3, group R2 grR3oup R5formR2atR1end" );
-
-    formatted = TEST_FN3( &fmt, buf_strfmt, 5, subs2, &len );
-    TEST_CMP2( formatted, "group\\$1,grR2oupR3, group R4 grR3oup R1formR4atR5end" );
-    
-    free( formatted );
-    buf_strfmt_dispose( &fmt );
-        
-}
 
 int main (int argc, const char * argv[])
 {
     #pragma unused(argc,argv)
     test();
-    test2();
     return 0;
 }
 
